@@ -1,0 +1,17 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+backend/db.sqlite3
+backend/media/
+backend/staticfiles/
+.idea/
+.vscode/
+# Flutter
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins*
+mobile/.packages
+*.apk
+*.iml
+.claude/

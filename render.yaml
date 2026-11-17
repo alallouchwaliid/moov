@@ -1,0 +1,36 @@
+# Blueprint Render : crée l'API Django + une base PostgreSQL en un clic.
+# Render → New → Blueprint → choisir ce dépôt GitHub.
+services:
+  - type: web
+    name: moov-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: bash start.sh
+    healthCheckPath: /api/trips/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: moov-db
+          property: connectionString
+      # Données de démo (amira@moov.ma…) au démarrage : mettre "false" pour une vraie mise en service
+      - key: SEED_DEMO
+        value: "true"
+      # Compte du back-office /admin/ : à renseigner dans le tableau de bord Render
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+
+databases:
+  - name: moov-db
+    plan: free
+    databaseName: moov
+    user: moov
