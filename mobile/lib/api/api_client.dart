@@ -25,7 +25,7 @@ class ApiClient {
   String get baseUrl => _baseUrl;
 
   /// Adresse par défaut (choisie à la compilation).
-  static const defaultBaseUrl = apiBaseUrl;
+  static final defaultBaseUrl = apiBaseUrl;
   final _storage = const FlutterSecureStorage();
   final _http = http.Client();
 
@@ -99,12 +99,13 @@ class ApiClient {
 
   Future<dynamic> delete(String path) => _send(() => _http.delete(_uri(path), headers: _headers()));
 
-  /// Envoi d'un fichier (ex. avatar) en multipart.
-  Future<dynamic> uploadFile(String path, String field, File file, {String method = 'PATCH'}) {
+  /// Envoi d'un fichier (ex. avatar) en multipart. Fonctionne sur mobile et sur le web.
+  Future<dynamic> uploadFile(String path, String field, List<int> bytes, String filename,
+      {String method = 'PATCH'}) {
     return _send(() async {
       final request = http.MultipartRequest(method, _uri(path))
         ..headers.addAll(_headers(json: false))
-        ..files.add(await http.MultipartFile.fromPath(field, file.path));
+        ..files.add(http.MultipartFile.fromBytes(field, bytes, filename: filename));
       return http.Response.fromStream(await _http.send(request));
     });
   }

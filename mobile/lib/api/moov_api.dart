@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../models/models.dart';
@@ -72,8 +71,8 @@ class MoovApi {
   static Future<User> updateMe(Map<String, dynamic> data) async =>
       User.fromJson(await api.patch('/me/', data) as Map<String, dynamic>);
 
-  static Future<User> uploadAvatar(File file) async =>
-      User.fromJson(await api.uploadFile('/me/', 'avatar', file) as Map<String, dynamic>);
+  static Future<User> uploadAvatar(XFile file) async => User.fromJson(
+      await api.uploadFile('/me/', 'avatar', await file.readAsBytes(), file.name) as Map<String, dynamic>);
 
   static Future<User> user(int id) async => User.fromJson(await api.get('/users/$id/') as Map<String, dynamic>);
 

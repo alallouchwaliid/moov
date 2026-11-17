@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../api/api_client.dart';
 import '../api/moov_api.dart';
@@ -69,7 +68,7 @@ class AuthProvider extends ChangeNotifier {
     await refreshMe();
   }
 
-  Future<void> uploadAvatar(File file) async {
+  Future<void> uploadAvatar(XFile file) async {
     await MoovApi.uploadAvatar(file);
     await refreshMe();
   }

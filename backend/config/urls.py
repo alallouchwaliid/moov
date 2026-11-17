@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import Http404
 from django.urls import include, path, re_path
 from django.views.static import serve
 from django.views.generic import RedirectView
@@ -10,9 +11,27 @@ admin.site.site_header = "MOOV — Administration"
 admin.site.site_title = "MOOV Admin"
 admin.site.index_title = "Back-office"
 
+
+
+def webapp(request, path=""):
+    """Version web installable de l'app MOOV (PWA pour iPhone), compilée dans /webapp."""
+    if not (settings.WEBAPP_DIR / "index.html").exists():
+        raise Http404("Version web non compilée (voir mobile/README.md).")
+    root = settings.WEBAPP_DIR.resolve()
+    target = (root / path).resolve()
+    if not path or not target.is_relative_to(root) or not target.is_file():
+        path = "index.html"  # routes internes de l'app (et jamais de fichier hors de /webapp)
+    response = serve(request, path, document_root=settings.WEBAPP_DIR)
+    if path == "index.html":
+        response["Cache-Control"] = "no-cache"  # toujours charger la dernière version
+    return response
+
+
 urlpatterns = [
-    # Le backend n'a pas de site web : la racine renvoie vers la documentation de l'API.
-    path("", RedirectView.as_view(pattern_name="swagger-ui", permanent=False)),
+    # Ouvrir l'adresse du serveur dans un navigateur mène à l'app web.
+    path("", RedirectView.as_view(url="/app/", permanent=False)),
+    path("app/", webapp, name="webapp"),
+    re_path(r"^app/(?P<path>.+)$", webapp),
     path("admin/", admin.site.urls),
     path("api/auth/", include("accounts.urls_auth")),
     path("api/", include("accounts.urls")),

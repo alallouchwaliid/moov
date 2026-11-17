@@ -151,6 +151,8 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# Version web de l'app (Flutter build web), servie sur /app/
+WEBAPP_DIR = Path(os.environ.get("WEBAPP_DIR", BASE_DIR.parent / "webapp"))
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},

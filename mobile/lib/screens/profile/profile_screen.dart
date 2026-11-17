@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (picked == null || !mounted) return;
     setState(() => _uploading = true);
     try {
-      await context.read<AuthProvider>().uploadAvatar(File(picked.path));
+      await context.read<AuthProvider>().uploadAvatar(picked);
       if (mounted) showSnack(context, 'Photo mise à jour.');
     } catch (e) {
       if (mounted) showSnack(context, e.toString(), error: true);
