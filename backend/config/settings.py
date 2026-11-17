@@ -13,6 +13,25 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def load_env_file(path):
+    """Charge un fichier .env simple (CLE=valeur) sans écraser les variables déjà définies.
+
+    Utilisé sur PythonAnywhere, où l'on ne peut pas définir de variables
+    d'environnement pour l'application web depuis l'interface.
+    """
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+load_env_file(BASE_DIR / ".env")
+
+
 def env_bool(name, default=False):
     return os.environ.get(name, str(default)).lower() in ("1", "true", "yes", "on")
 

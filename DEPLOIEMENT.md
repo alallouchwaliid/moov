@@ -1,53 +1,70 @@
-# Mettre le backend MOOV en ligne (Render, gratuit)
+# Mettre le backend MOOV en ligne
 
-Le dépôt contient tout ce qu'il faut : [render.yaml](render.yaml) crée l'API Django **et** la base PostgreSQL en une fois.
+## Option recommandée : PythonAnywhere (gratuit, sans carte bancaire)
 
-## 1. Mettre le code sur GitHub
+Résultat : l'API à l'adresse `https://<votre-nom>.pythonanywhere.com/api/`, base SQLite, HTTPS inclus.
 
-1. Créez un compte sur https://github.com puis un dépôt **vide** nommé `moov` (privé ou public).
-2. Dans le dossier `Moov` :
+### 1. Créer le compte
 
-```bash
-git init
-git add .
-git commit -m "MOOV : backend Django + app Flutter"
-git branch -M main
-git remote add origin https://github.com/<votre-compte>/moov.git
-git push -u origin main
-```
+Sur https://www.pythonanywhere.com : **Pricing & signup → Create a Beginner account**.
+Le nom d'utilisateur choisi donne l'adresse du site (ex. `moovapp` → `moovapp.pythonanywhere.com`).
 
-Le `.gitignore` exclut déjà les fichiers à ne pas publier (`.env`, base SQLite, `.venv`, APK, builds).
+### 2. Créer la web app
 
-## 2. Déployer sur Render
+Onglet **Web → Add a new web app → Next → Manual configuration** (pas « Django ») → **Python 3.12** → Next.
 
-1. Créez un compte sur https://render.com avec **« Sign in with GitHub »**.
-2. **New → Blueprint**, choisissez le dépôt `moov` (autorisez Render à y accéder si demandé).
-3. Render lit `render.yaml` et propose : `moov-api` (web) + `moov-db` (PostgreSQL). Renseignez :
-   - `DJANGO_SUPERUSER_EMAIL` : votre email d'administrateur
-   - `DJANGO_SUPERUSER_PASSWORD` : un mot de passe solide (pour `/admin/`)
-4. **Apply**. Le premier déploiement prend 5 à 10 minutes.
+### 3. Récupérer le code et tout installer
 
-L'API est ensuite disponible à l'adresse affichée par Render, par exemple :
-
-- API : `https://moov-api.onrender.com/api/`
-- Documentation : `https://moov-api.onrender.com/api/docs/`
-- Back-office : `https://moov-api.onrender.com/admin/`
-
-Chaque `git push` sur `main` redéploie automatiquement.
-
-## 3. Brancher l'application mobile
-
-**Sans recompiler** : écran de connexion → icône serveur en haut à droite → `https://moov-api.onrender.com/api`.
-
-**APK qui pointe directement vers le serveur en ligne** (dans `mobile`) :
+Onglet **Consoles → Bash**, puis :
 
 ```bash
-flutter build apk --release --split-per-abi --target-platform android-arm64 --dart-define=API_URL=https://moov-api.onrender.com/api
+git clone https://github.com/alallouchwaliid/moov.git
 ```
 
-## Limites de l'offre gratuite
+```bash
+bash ~/moov/deploy/pythonanywhere/setup.sh
+```
 
-- **Mise en veille** : après 15 min sans requête, le serveur s'endort ; la requête suivante attend ~50 s (l'app patiente jusqu'à 60 s). Pensez à ouvrir l'app une minute avant une démo.
-- **Base de données** : la base PostgreSQL gratuite de Render a une durée de vie limitée (voir les conditions actuelles sur render.com) ; prévoir l'offre payante ou une autre base pour un usage durable.
-- **Photos de profil** : stockées sur le disque du serveur, elles sont **effacées à chaque redéploiement**. Pour la production, utiliser un stockage externe (ex. Cloudinary, S3).
-- **Données de démo** : `SEED_DEMO=true` recrée les comptes `amira@moov.ma`… au démarrage s'ils n'existent pas. Passez-le à `false` dans Render (*Environment*) pour une vraie mise en service.
+Le script (3 à 5 minutes) installe les dépendances, crée `backend/.env` avec une clé secrète, la base de données, les données de démo, configure le fichier WSGI, puis demande l'email et le mot de passe du compte administrateur.
+
+### 4. Activer
+
+Onglet **Web** :
+
+1. **Virtualenv** : `/home/<votre-nom>/.virtualenvs/moov`
+2. **Security → Force HTTPS** : activé
+3. Bouton vert **Reload**
+
+Vérifiez : `https://<votre-nom>.pythonanywhere.com/api/trips/`, `/api/docs/` et `/admin/`.
+
+### Mettre à jour après un `git push`
+
+```bash
+cd ~/moov && git pull && bash deploy/pythonanywhere/setup.sh
+```
+
+Puis **Reload** dans l'onglet Web.
+
+### Limites du compte gratuit
+
+- La web app doit être **prolongée une fois par mois** : onglet Web → bouton « Run until 1 month from today ».
+- Base **SQLite** (pas de PostgreSQL ni MySQL sur les nouveaux comptes gratuits) : suffisant pour un projet étudiant.
+- 512 Mo d'espace disque, puissance limitée : adapté à une démo, pas à des milliers d'utilisateurs.
+
+---
+
+## Brancher l'application mobile
+
+**Sans recompiler** : écran de connexion → icône serveur en haut à droite → `https://<votre-nom>.pythonanywhere.com/api`.
+
+**APK pointant directement vers le serveur** (dans `mobile`) :
+
+```bash
+flutter build apk --release --split-per-abi --target-platform android-arm64 --dart-define=API_URL=https://<votre-nom>.pythonanywhere.com/api
+```
+
+---
+
+## Alternative : Render (PostgreSQL)
+
+Le fichier [render.yaml](render.yaml) permet un déploiement Render (**New → Blueprint**). Selon les conditions du moment, Render peut demander une carte bancaire, limite la durée de vie de la base gratuite et met le serveur en veille après 15 min d'inactivité.
