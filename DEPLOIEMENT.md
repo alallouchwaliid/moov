@@ -65,6 +65,28 @@ flutter build apk --release --split-per-abi --target-platform android-arm64 --da
 
 ---
 
+## Version iPhone (application web installable)
+
+Sans Mac ni compte Apple, MOOV est disponible sur iPhone en version web installable (PWA) :
+
+1. Sur l'iPhone, ouvrir **Safari** à l'adresse https://waliiiiiid.pythonanywhere.com
+2. Bouton **Partager** (carré avec une flèche) → **Sur l'écran d'accueil** → **Ajouter**
+3. L'icône MOOV apparaît sur l'écran d'accueil et s'ouvre en plein écran, comme une app.
+
+Même serveur et mêmes comptes que l'app Android. Fonctionne aussi sur ordinateur et Android (Chrome).
+
+**Mettre à jour la version web** après une modification de l'app (dans `mobile`) :
+
+```bash
+powershell -ExecutionPolicy Bypass -File build_web.ps1
+```
+
+Puis `git add -A`, `git commit`, `git push`, et sur PythonAnywhere : `cd ~/moov && git pull` + bouton **Reload**.
+
+Une vraie app iOS (App Store / TestFlight) nécessite un Mac (ou un service de compilation comme Codemagic) et un compte Apple Developer (99 $/an).
+
+---
+
 ## Alternative : Render (PostgreSQL)
 
 Le fichier [render.yaml](render.yaml) permet un déploiement Render (**New → Blueprint**). Selon les conditions du moment, Render peut demander une carte bancaire, limite la durée de vie de la base gratuite et met le serveur en veille après 15 min d'inactivité.
