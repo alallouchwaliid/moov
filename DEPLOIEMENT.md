@@ -2,7 +2,7 @@
 
 ## Option recommandée : PythonAnywhere (gratuit, sans carte bancaire)
 
-Résultat : l'API à l'adresse `https://<votre-nom>.pythonanywhere.com/api/`, base SQLite, HTTPS inclus.
+Résultat : l'API à l'adresse `https://waliiiiiid.pythonanywhere.com/api/`, base SQLite, HTTPS inclus.
 
 ### 1. Créer le compte
 
@@ -35,7 +35,7 @@ Onglet **Web** :
 2. **Security → Force HTTPS** : activé
 3. Bouton vert **Reload**
 
-Vérifiez : `https://<votre-nom>.pythonanywhere.com/api/trips/`, `/api/docs/` et `/admin/`.
+Vérifiez : `https://waliiiiiid.pythonanywhere.com/api/trips/`, `/api/docs/` et `/admin/`.
 
 ### Mettre à jour après un `git push`
 
@@ -55,12 +55,12 @@ Puis **Reload** dans l'onglet Web.
 
 ## Brancher l'application mobile
 
-**Sans recompiler** : écran de connexion → icône serveur en haut à droite → `https://<votre-nom>.pythonanywhere.com/api`.
+**Sans recompiler** : écran de connexion → icône serveur en haut à droite → `https://waliiiiiid.pythonanywhere.com/api`.
 
 **APK pointant directement vers le serveur** (dans `mobile`) :
 
 ```bash
-flutter build apk --release --split-per-abi --target-platform android-arm64 --dart-define=API_URL=https://<votre-nom>.pythonanywhere.com/api
+flutter build apk --release --split-per-abi --target-platform android-arm64 --dart-define=API_URL=https://waliiiiiid.pythonanywhere.com/api
 ```
 
 ---
